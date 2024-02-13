@@ -13,13 +13,10 @@ services:
       - DB_PORT=5432
       - DB_USERNAME=postgres
       - DB_PASSWORD=password
-      - DB_NAME=blockchain_tracker
+      - DB_DATABASE=blockchain_tracker
       - MORALIS_API_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6ImM5YWI4NTY2LTkwNDItNDllYS1iYzQxLTAzYWJkNTZmOGYyYSIsIm9yZ0lkIjoiNDE1MjMyIiwidXNlcklkIjoiNDI2NzMxIiwidHlwZSI6IlBST0pFQ1QiLCJ0eXBlSWQiOiJiN2E5MTYxMS03ZjdlLTRjMGMtYWRiNy01Zjk3NjBhNjRlZjgiLCJpYXQiOjE3MzA5NjQxNTYsImV4cCI6NDg4NjcyNDE1Nn0.WYupxMn17aq8Q3YUC-VSUn6JHBBVUho1INZ-H0pMgXE
-      - SMTP_HOST=smtp.mailersend.net
-      - SMTP_PORT=587
-      - SMTP_USER=MS_hJipN6@trial-3vz9dlez251lkj50.mlsender.net
-      - SMTP_PASS=99b5wVdlHh4usOQw
-      - EMAIL_FROM=info@trial-3vz9dlez251lkj50.mlsender.net
+      - RESEND_API=re_WkLSCyWE_DTwyM7GmzkLZZ5raJXKiaZmf
+      - EMAIL_FROM=onboarding@resend.dev
 
   db:
     image: postgres
