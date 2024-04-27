@@ -30,8 +30,10 @@ DB_DATABASE=
 MORALIS_API_KEY=your_moralis_api_key
 RESEND_API=your_resend_api_key
 EMAIL_FROM=
+```
 
 ## Quick Start
+
 - docker-compose up --build
 
 The application will be available at:
