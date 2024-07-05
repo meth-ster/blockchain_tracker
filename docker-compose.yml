@@ -1,41 +1,31 @@
-# For local development
-
 version: '3'
-
 services:
-  profiler-server:
-    container_name: bolide-wallet-profiler-server
-    depends_on:
-      - profiler-postgress
+  app:
     build: .
     ports:
       - "3000:3000"
-    networks:
-      - profiler-net
-  grafana:
-    container_name: bolide-wallet-profiler-grafana
-    image: grafana/grafana
-    ports:
-      - "3001:3000"
-    volumes:
-      - ./grafana-provisioning:/etc/grafana/provisioning
-    networks:
-      - profiler-net
-  profiler-postgress:
-    container_name: bolide-wallet-profiler-postgress
-    image: postgres
-    expose:
-      - 5432
-    ports:
-      - "5432:5432"
+    depends_on:
+      - db
     environment:
-      - POSTGRES_USER=${DB_USERNAME}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=password
+      - DB_NAME=blockchain_tracker
+      - MORALIS_API_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6ImM5YWI4NTY2LTkwNDItNDllYS1iYzQxLTAzYWJkNTZmOGYyYSIsIm9yZ0lkIjoiNDE1MjMyIiwidXNlcklkIjoiNDI2NzMxIiwidHlwZSI6IlBST0pFQ1QiLCJ0eXBlSWQiOiJiN2E5MTYxMS03ZjdlLTRjMGMtYWRiNy01Zjk3NjBhNjRlZjgiLCJpYXQiOjE3MzA5NjQxNTYsImV4cCI6NDg4NjcyNDE1Nn0.WYupxMn17aq8Q3YUC-VSUn6JHBBVUho1INZ-H0pMgXE
+      - SMTP_HOST=smtp.mailersend.net
+      - SMTP_PORT=587
+      - SMTP_USER=MS_hJipN6@trial-3vz9dlez251lkj50.mlsender.net
+      - SMTP_PASS=99b5wVdlHh4usOQw
+      - EMAIL_FROM=info@trial-3vz9dlez251lkj50.mlsender.net
+
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=blockchain_tracker
     volumes:
-      - ./src/db/01_init_pg_dbs.sql:/docker-entrypoint-initdb.d/01_init_pg_dbs.sql
-      - ./src/db/02_dump.sql:/docker-entrypoint-initdb.d/02_dump.sql
-    networks:
-      - profiler-net
-networks:
-  profiler-net:
-    name: bolide-wallet-profiler-net
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
