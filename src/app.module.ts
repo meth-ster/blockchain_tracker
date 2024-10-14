@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 
 import { PriceModule } from './price/price.module';
+import { AlertModule } from './alert/alert.module';
 import { HealthModule } from './health/health.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -30,6 +31,7 @@ import { AppService } from './app.service';
     }),
     ScheduleModule.forRoot(),
     HealthModule,
+    AlertModule,
     PriceModule,
   ],
   controllers: [AppController],

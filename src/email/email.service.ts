@@ -1,36 +1,29 @@
 import { Injectable } from '@nestjs/common';
-import * as nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 
 @Injectable()
 export class EmailService {
-  private transporter;
+  private resend;
 
   constructor() {
-    this.transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: parseInt(process.env.SMTP_PORT, 10),
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-    });
+    this.resend = new Resend(process.env.RESEND_API);
   }
 
   async sendAlert(chain: string, oldPrice: number, newPrice: number) {
-    await this.transporter.sendMail({
+    await this.resend.emails.send({
       from: process.env.EMAIL_FROM,
       to: 'hyperhire_assignment@hyperhire.in',
       subject: `Price Alert: ${chain} price increased by more than 3%`,
-      text: `The price of ${chain} has increased from $${oldPrice} to $${newPrice}.`,
-    });
+      html: `<p>The price of ${chain} has increased from <strong>$${oldPrice}</strong> to <strong>$${newPrice}</strong>!</p>`
+    })
   }
 
   async sendPriceAlert(chain: string, targetPrice: number, currentPrice: number, email: string) {
-    await this.transporter.sendMail({
+    await this.resend.emails.send({
       from: process.env.EMAIL_FROM,
       to: email,
       subject: `Price Alert: ${chain} reached target price`,
-      text: `The price of ${chain} has reached your target price of $${targetPrice}. Current price: $${currentPrice}.`,
-    });
+      html: `<p>The price of ${chain} has reached your target price of <strong>$${targetPrice}</strong>. Current price: <strong>$${currentPrice}</strong>!</p>`
+    })
   }
 }

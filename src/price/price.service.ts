@@ -5,6 +5,7 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import axios from 'axios';
 import { Price } from './price.entity';
 import { EmailService } from './../email/email.service';
+import { AlertService } from '../alert/alert.service';
 
 @Injectable()
 export class PriceService {
@@ -12,6 +13,7 @@ export class PriceService {
     @InjectRepository(Price)
     private priceRepository: Repository<Price>,
     private emailService: EmailService,
+    private alertService: AlertService,
     private readonly logger: Logger,
   ) {}
 
@@ -27,12 +29,11 @@ export class PriceService {
     }];
 
     for (const chain of chains) {
-      this.logger.log(`Track Price is fetching now ${chain.network}...`, 'Price');
-
+      this.logger.log(`Track Price is fetching on ${chain.network} now ...`, 'Price');
       const price = await this.fetchPrice(chain.address);
-
       await this.savePrice(chain.network, price);
       await this.checkPriceIncrease(chain.network, price);
+      await this.alertService.checkAlerts(chain.network, price);
     }
   }
 
@@ -65,8 +66,7 @@ export class PriceService {
   }
 
   private async checkPriceIncrease(chain: string, currentPrice: number) {
-    // const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
-    const oneHourAgo = new Date(Date.now() - 60 * 1000);
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
     
     const oldPriceResult = await this.priceRepository.query(`
       SELECT id, chain, price, timestamp
@@ -75,7 +75,6 @@ export class PriceService {
       ORDER BY timestamp DESC
       LIMIT 1
     `, [chain, oneHourAgo]);
-
     
     if (oldPriceResult.length > 0) {
       const oldPrice = oldPriceResult[0];
@@ -83,8 +82,6 @@ export class PriceService {
       if (currentPrice > oldPrice.price * 1.03) {
         await this.emailService.sendAlert(chain, oldPrice.price, currentPrice);
       }
-
-      await this.emailService.sendAlert(chain, oldPrice.price, currentPrice);
     }
   }
 
